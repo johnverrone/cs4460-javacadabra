@@ -1,0 +1,28 @@
+body {
+    margin: 0;
+    font: 11px sans-serif;
+    font-weight: 300;
+    text-align: center;
+    background: #22180d;
+    color: #E6AC49;
+    font-family: 'Open Sans', sans-serif;
+}
+
+h1 {
+    font-family: 'Oswald';
+    font-weight: 300;
+    font-size: 5.0em;
+    margin: 25px 0px 25px 0px;
+    padding: 0;
+}
+
+h2 {
+    font-weight: 400;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+#yearRange {
+    width: 30%;
+    margin: 0 auto;
+}
