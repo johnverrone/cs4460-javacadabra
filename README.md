@@ -3,7 +3,9 @@
 
 #### To Run:
 1. Clone repository
-        git clone git@github.com:jverrone3/cs4460-javacadabra.git
+```
+git clone git@github.com:jverrone3/cs4460-javacadabra.git
+```
 2. Open terminal
 3. Navigate into the directory
 4. Run `npm install` to install dependencies
@@ -14,7 +16,9 @@
 1. Download and install node. [http://nodejs.org](https://nodejs.org/en/)
 2. Open terminal.
 3. Ensure node and npm are installed
-        node -v
-        npm -v
+```
+node -v
+npm -v
+```
 4. Install gulp
         npm install -g gulp
