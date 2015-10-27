@@ -1,0 +1,8 @@
+# Depedency directory
+node_modules
+
+# Mac OS metadata
+.DS_Store
+
+# Compiled files
+dist

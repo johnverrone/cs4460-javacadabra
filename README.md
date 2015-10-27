@@ -1,10 +1,18 @@
 # CS 4460 Information Visualization Final Project
 ## Javacadabra
 
-### TO RUN:
-1. clone repository
-2. cd into the directory
-3. start a local server (python -m SimpleHTTPServer)
-4. open browser and go to localhost:PORT
+#### To Run:
+1. Clone repository
+2. Open terminal
+3. Navigate into the directory
+4. Run `gulp`
+5. Open browser and go to localhost:8080
 
-I used bower to manage front-end dependencies, but committed the libraries/ directory anyways, just in case there are version issues.
+#### To install gulp:
+1. Download and install node. [http://nodejs.org](https://nodejs.org/en/)
+2. Open terminal.
+3. Ensure node and npm are installed
+        node -v
+        npm -v
+4. Install gulp
+        npm install -g gulp

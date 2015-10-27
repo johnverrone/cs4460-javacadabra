@@ -1,0 +1,24 @@
+{
+  "name": "javacadabra",
+  "version": "1.0.0",
+  "description": "### TO RUN: 1. clone repository 2. cd into the directory 3. start a local server (python -m SimpleHTTPServer) 4. open browser and go to localhost:PORT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jverrone3/cs4460-javacadabra.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jverrone3/cs4460-javacadabra/issues"
+  },
+  "homepage": "https://github.com/jverrone3/cs4460-javacadabra#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.3.0",
+    "gulp-connect": "^2.2.0"
+  }
+}
