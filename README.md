@@ -1,5 +1,5 @@
-# CS 4460 Information Visualization Final Project
-## Javacadabra
+# CS 4460 InfoViz Final Project
+<b>Javacadabra</b>
 
 #### To Run:
 1. Clone repository
@@ -21,4 +21,6 @@ node -v
 npm -v
 ```
 4. Install gulp
-        npm install -g gulp
+```
+npm install -g gulp
+```
