@@ -10,7 +10,7 @@ var yAxis = d3.svg.axis().scale(y).orient("left");
 
 var line = d3.svg.line()
     .x(d => x(d.year))
-    .y(d => y(d.value))
+    .y(d => y(d.coffee))
     .interpolate("linear");
 
 var svg = d3.select("body").append("svg")
@@ -21,7 +21,7 @@ var svg = d3.select("body").append("svg")
 
 var partition = d3.layout.partition()
     .children(d => Array.isArray(d.values) ? d.values : null)
-    .value(d => d.values);
+    .value(d => d.production);
 
 d3.csv("data/total_production.csv", type, renderLineChart);
 
@@ -34,19 +34,30 @@ function renderLineChart(error, data) {
             .key(d => d.continent)
             .key(d => d.region)
             .key(d => d.country)
+            .key(d => d.production)
             .entries(data)
     };
 
-    console.log(partition.nodes(hierarchy));
+    console.log(data);
+    partition.nodes(hierarchy);
 
-    var minVal = d3.min(data, d => d3.min(d.values));
-    var maxVal = d3.max(data, d => d3.max(d.values));
-    var yearsArray = new Array;
-    for(var o in data[0].values) {
-        yearsArray.push(data[0].values[o].year);
-    }
-    x.domain(yearsArray);
-    y.domain([0, hierarchy.value]).nice();
+    var all_years = data.map(d => d.production.map(h => h.year)).reduce((a,b) => a.concat(b));
+    var all_production = data.map(d => d.production.map(h => h.coffee)).reduce((a,b) => a.concat(b));
+
+    x.domain(all_years);
+    y.domain(d3.extent(all_production));
+
+    console.log(hierarchy);
+
+    var country_g = svg.selectAll(".country_g")
+        .data(data)
+        .enter().append("g")
+        .attr("class", "country_g");
+
+    var country_line = country_g.append("path")
+        .attr("class", "line")
+        .attr("data-country-id", d => d.country)
+        .attr("d", d => line(d.production));
 
     svg.append("g")
         .attr("class", "x axis")
@@ -57,9 +68,7 @@ function renderLineChart(error, data) {
         .attr("class", "y axis")
         .call(yAxis);
 
-    for(var i = 0; i < data.length; i++) {
-        svg.append("path")
-            .attr("class", "line")
-            .attr("d", line(data[i].values));
-    }
+    svg.append("path")
+        .attr("class", "line")
+        .attr("d", line(data[0].values));
 }
