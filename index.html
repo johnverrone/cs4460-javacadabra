@@ -17,6 +17,36 @@
         <link href='css/map.css' rel='stylesheet' type='text/css'>
 
         <title>Coffee Visualization - Javacadabra</title>
+
+        <style>
+
+            body {
+              font: 10px sans-serif;
+              color: white;
+            }
+
+            .axis path,
+            .axis line {
+              fill: none;
+              stroke: #FFF;
+              shape-rendering: crispEdges;
+            }
+
+            text {
+                fill: white;
+            }
+
+            .x.axis path {
+/*              display: none;*/
+            }
+
+            .line {
+              fill: none;
+              stroke: #f1c40f;
+              stroke-width: 1.5px;
+            }
+
+        </style>
     </head>
     <body>
         <!-- External js libraries -->
@@ -25,115 +55,90 @@
         <script src="libraries/leaflet/dist/leaflet.js"></script>
         <script src="libraries/jquery/dist/jquery.min.js"></script>
 
-
         <div>
-            <h1>Javacadabra - Coffee Visualization</h1>
+            <h1>Javacadabra</h1>
         </div>
-        <!--    <div id="map"></div>-->
 
         <!-- Our js files -->
-        <!--    <script src="dist/map.js"></script>-->
+        <script src="dist/preprocessing.js"></script>
         <script src="dist/chart.js"></script>
+        <script src="dist/linechart.js"></script>
         <script>
 
             // Global config
-            var margin = {top: 30, right: 10, bottom: 20, left: 10},
-                width = 636 - margin.left - margin.right,
-                height = 476 - margin.top - margin.bottom,
-                radius = Math.min(width, height) / 2;
+//            var margin = {top: 30, right: 10, bottom: 20, left: 10},
+//                width = 400 - margin.left - margin.right,
+//                height = 275 - margin.top - margin.bottom,
+//                radius = Math.min(width, height) / 2;
+//
+//            // Sunburst config
+//            var x = d3.scale.linear().range([0, 2 * Math.PI]);
+//            var y = d3.scale.sqrt().range([0, radius]);
+//
+//            var xAxis = d3.svg.axis().scale(x).orient("bottom");
+//            var yAxis = d3.svg.axis().scale(y).orient("left");
+//
+//            var sunburst1 = d3.select("body").append("svg")
+//                .attr("width", width + margin.left + margin.right)
+//                .attr("height", height + margin.top + margin.bottom)
+//                .append("g")
+//                .attr("transform", "translate(" +
+//                        (margin.left + width  / 2) + "," +
+//                        (margin.top  + height / 2) + ")");
+//
+//            var sunburst2 = d3.select("body").append("svg")
+//                .attr("width", width + margin.left + margin.right)
+//                .attr("height", height + margin.top + margin.bottom)
+//                .append("g")
+//                .attr("transform", "translate(" +
+//                        (margin.left + width  / 2) + "," +
+//                        (margin.top  + height / 2) + ")");
 
-            // Radial Chart config
-            var x = d3.scale.linear().range([0, 2 * Math.PI]);
-            var y = d3.scale.sqrt().range([0, radius]);
 
-            var xAxis = d3.svg.axis().scale(x).orient("bottom");
-            var yAxis = d3.svg.axis().scale(y).orient("left");
+//            function yearChange() {
+//                var sliderValue = document.getElementById("yearRange").value;
+//                var yearBeg = '19';
+//                var yearEnd = '90';
+//                var year2End = '91';
+//                if (sliderValue < 9) {
+//                    yearBeg = '19';
+//                    yearEnd = '9' + sliderValue;
+//                    year2End = '9' + (parseFloat(sliderValue) + 1);
+//                } else if (sliderValue == 9) {
+//                    yearBeg = '19';
+//                    yearEnd = '99';
+//                    year2End = '00';
+//                } else if (sliderValue < 19) {
+//                    yearBeg = 20;
+//                    yearEnd = '0' + sliderValue % 10;
+//                    year2End = '0' + (parseFloat(sliderValue % 10) + 1);
+//                } else if (sliderValue == 19) {
+//                    yearBeg = '20';
+//                    yearEnd = '09';
+//                    year2End = '10';
+//                } else {
+//                    yearBeg = '20';
+//                    yearEnd = '1' + (parseFloat(sliderValue) % 10);
+//                    year2End = '1' + (parseFloat(sliderValue) % 10 + 1);
+//                }
+//                year = yearBeg + yearEnd + '/' + year2End;
+//                document.getElementById('slideValue').innerHTML = year;
+//                d3.csv("data/total_production.csv", type, render1);
+//                d3.csv("data/domestic_consumption.csv", type, render2);
+//            }
 
-            var svg = d3.select("body").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" +
-                        (margin.left + width  / 2) + "," +
-                        (margin.top  + height / 2) + ")");
 
-            // Year slider
-            var year = '1990/91';
-
-            function yearChange() {
-                var sliderValue = document.getElementById("yearRange").value;
-                var yearBeg = '19';
-                var yearEnd = '90';
-                var year2End = '91';
-                if (sliderValue < 9) {
-                    yearBeg = '19';
-                    yearEnd = '9' + sliderValue;
-                    year2End = '9' + (parseFloat(sliderValue) + 1);
-                } else if (sliderValue == 9) {
-                    yearBeg = '19';
-                    yearEnd = '99';
-                    year2End = '00';
-                } else if (sliderValue < 19) {
-                    yearBeg = 20;
-                    yearEnd = '0' + sliderValue % 10;
-                    year2End = '0' + (parseFloat(sliderValue % 10) + 1);
-                } else if (sliderValue == 19) {
-                    yearBeg = '20';
-                    yearEnd = '09';
-                    year2End = '10';
-                } else {
-                    yearBeg = '20';
-                    yearEnd = '1' + (parseFloat(sliderValue) % 10);
-                    year2End = '1' + (parseFloat(sliderValue) % 10 + 1);
-                }
-                year = yearBeg + yearEnd + '/' + year2End;
-                document.getElementById('slideValue').innerHTML = year;
-                d3.csv("data/total_production.csv", type, render);
-            }
-
-            // Global data preprocessing
-            function type(d) {
-                d['1990/91'] = +d['1990/91'];
-                d['1991/92'] = +d['1991/92'];
-                d['1992/93'] = +d['1992/93'];
-                d['1993/94'] = +d['1993/94'];
-                d['1994/95'] = +d['1994/95'];
-                d['1995/96'] = +d['1995/96'];
-                d['1996/97'] = +d['1996/97'];
-                d['1997/98'] = +d['1997/98'];
-                d['1998/99'] = +d['1998/99'];
-                d['1999/00'] = +d['1999/00'];
-                d['2000/01'] = +d['2000/01'];
-                d['2001/01'] = +d['2001/02'];
-                d['2002/03'] = +d['2002/03'];
-                d['2003/04'] = +d['2003/04'];
-                d['2004/05'] = +d['2004/05'];
-                d['2005/06'] = +d['2005/06'];
-                d['2006/07'] = +d['2006/07'];
-                d['2007/08'] = +d['2007/08'];
-                d['2008/09'] = +d['2008/09'];
-                d['2009/10'] = +d['2009/10'];
-                d['2010/11'] = +d['2010/11'];
-                d['2011/12'] = +d['2011/12'];
-                d['2012/13'] = +d['2012/13'];
-                d['2013/14'] = +d['2013/14'];
-                d['2014/15'] = +d['2014/15'];
-                return d;
-            }
-            function isGoodData(datum) {
-                return datum['1990/91'] > 0;
-            }
-
-            // Global render
-            function render(data) {
+            function render1(data) {
                 data = data.filter(isGoodData);
-                renderSunburst(data, year);
+//                renderSunburst(data, sunburst1, year);
+            }
+            function render2(data) {
+                data = data.filter(isGoodData);
+//                renderSunburst(data, sunburst2, year);
             }
 
-            d3.csv("data/total_production.csv", type, render);
+            d3.csv("data/total_production.csv", type, render1);
+            d3.csv("data/domestic_consumption.csv", type, render2);
         </script>
-
-        <input type="range" onchange="yearChange()" id="yearRange" min="0" max="24" step="1" value="0"/>
-        <p id="slideValue">1990/91</p>
     </body>
 </html>

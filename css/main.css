@@ -3,15 +3,15 @@ body {
     font: 11px sans-serif;
     font-weight: 300;
     text-align: center;
-    background: #22180d;
-    color: #E6AC49;
+    background: #222222;
+    color: #FFFFFF;
     font-family: 'Open Sans', sans-serif;
 }
 
 h1 {
     font-family: 'Oswald';
     font-weight: 300;
-    font-size: 5.0em;
+    font-size: 4.0em;
     margin: 25px 0px 25px 0px;
     padding: 0;
 }

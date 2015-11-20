@@ -1,4 +1,4 @@
-function renderSunburst(data, year) {
+function renderSunburst(data, svg, year) {
 
     var hierarchy = {
         key: "World",
@@ -105,7 +105,7 @@ var color = function(d) {
 
     if (!d.parent) {
         colors = d3.scale.category10().domain(d3.range(0,10));
-        d.color = "#22180d";
+        d.color = "#222222";
     } else if (d.children) {
         var startColor = d3.hcl(d.color).darker();
         var endColor   = d3.hcl(d.color).brighter();
