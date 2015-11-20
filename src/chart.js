@@ -1,3 +1,78 @@
+var margin = {top: 30, right: 10, bottom: 20, left: 10},
+    width = 400 - margin.left - margin.right,
+    height = 275 - margin.top - margin.bottom,
+    radius = Math.min(width, height) / 2;
+
+var x = d3.scale.linear().range([0, 2 * Math.PI]);
+var y = d3.scale.sqrt().range([0, radius]);
+
+var xAxis = d3.svg.axis().scale(x).orient("bottom");
+var yAxis = d3.svg.axis().scale(y).orient("left");
+
+var sunburst1 = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" +
+            (margin.left + width  / 2) + "," +
+            (margin.top  + height / 2) + ")");
+
+var sunburst2 = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" +
+            (margin.left + width  / 2) + "," +
+            (margin.top  + height / 2) + ")");
+
+var year = '1990/91';
+
+
+function yearChange() {
+    var sliderValue = document.getElementById("yearRange").value;
+    var yearBeg = '19';
+    var yearEnd = '90';
+    var year2End = '91';
+    if (sliderValue < 9) {
+        yearBeg = '19';
+        yearEnd = '9' + sliderValue;
+        year2End = '9' + (parseFloat(sliderValue) + 1);
+    } else if (sliderValue == 9) {
+        yearBeg = '19';
+        yearEnd = '99';
+        year2End = '00';
+    } else if (sliderValue < 19) {
+        yearBeg = 20;
+        yearEnd = '0' + sliderValue % 10;
+        year2End = '0' + (parseFloat(sliderValue % 10) + 1);
+    } else if (sliderValue == 19) {
+        yearBeg = '20';
+        yearEnd = '09';
+        year2End = '10';
+    } else {
+        yearBeg = '20';
+        yearEnd = '1' + (parseFloat(sliderValue) % 10);
+        year2End = '1' + (parseFloat(sliderValue) % 10 + 1);
+    }
+    year = yearBeg + yearEnd + '/' + year2End;
+    document.getElementById('slideValue').innerHTML = year;
+    d3.csv("data/total_production.csv", type, render1);
+    d3.csv("data/domestic_consumption.csv", type, render2);
+}
+
+
+function render1(data) {
+    data = data.filter(isGoodData);
+    renderSunburst(data, sunburst1, year);
+}
+function render2(data) {
+    data = data.filter(isGoodData);
+    renderSunburst(data, sunburst2, year);
+}
+
+d3.csv("data/total_production.csv", sunburstType, render1);
+d3.csv("data/domestic_consumption.csv", sunburstType, render2);
+
 function renderSunburst(data, svg, year) {
 
     var hierarchy = {

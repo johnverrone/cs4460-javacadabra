@@ -3,7 +3,7 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
     height = 500 - margin.top - margin.bottom;
 
 var x = d3.scale.ordinal().rangePoints([0, width]);
-var y = d3.scale.linear().range([height, 0]);
+var y = d3.scale.sqrt().range([height, 0]);
 
 var xAxis = d3.svg.axis().scale(x).orient("bottom");
 var yAxis = d3.svg.axis().scale(y).orient("left");
@@ -11,7 +11,7 @@ var yAxis = d3.svg.axis().scale(y).orient("left");
 var line = d3.svg.line()
     .x(d => x(d.year))
     .y(d => y(d.coffee))
-    .interpolate("linear");
+    .interpolate("basis");
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -21,7 +21,9 @@ var svg = d3.select("body").append("svg")
 
 var partition = d3.layout.partition()
     .children(d => Array.isArray(d.values) ? d.values : null)
-    .value(d => d.production);
+    .value(d => d.production[0].coffee);
+
+var color = d3.scale.category10().domain(d3.range(0,10));
 
 d3.csv("data/total_production.csv", type, renderLineChart);
 
@@ -34,7 +36,6 @@ function renderLineChart(error, data) {
             .key(d => d.continent)
             .key(d => d.region)
             .key(d => d.country)
-            .key(d => d.production)
             .entries(data)
     };
 
@@ -57,7 +58,8 @@ function renderLineChart(error, data) {
     var country_line = country_g.append("path")
         .attr("class", "line")
         .attr("data-country-id", d => d.country)
-        .attr("d", d => line(d.production));
+        .attr("d", d => line(d.production))
+        .attr("stroke", d => color(d.continent));
 
     svg.append("g")
         .attr("class", "x axis")
