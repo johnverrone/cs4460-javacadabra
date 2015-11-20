@@ -3,15 +3,15 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
     height = 500 - margin.top - margin.bottom;
 
 var x = d3.scale.ordinal().rangePoints([0, width]);
-var y = d3.scale.sqrt().range([height, 0]);
+var y = d3.scale.linear().range([height, 0]);
 
 var xAxis = d3.svg.axis().scale(x).orient("bottom");
 var yAxis = d3.svg.axis().scale(y).orient("left");
 
 var line = d3.svg.line()
     .x(d => x(d.year))
-    .y(d => y(d.coffee))
-    .interpolate("basis");
+    .y(d => y(d.value))
+    .interpolate("linear");
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -21,7 +21,7 @@ var svg = d3.select("body").append("svg")
 
 var partition = d3.layout.partition()
     .children(d => Array.isArray(d.values) ? d.values : null)
-    .value(d => d.production[0].coffee);
+    .value(d => d.value);
 
 var color = d3.scale.category10().domain(d3.range(0,10));
 
@@ -33,33 +33,32 @@ function renderLineChart(error, data) {
     var hierarchy = {
         key: "World",
         values: d3.nest()
+            .key(d => d.year)
             .key(d => d.continent)
             .key(d => d.region)
-            .key(d => d.country)
             .entries(data)
     };
 
     console.log(data);
+    console.log(hierarchy);
     partition.nodes(hierarchy);
 
-    var all_years = data.map(d => d.production.map(h => h.year)).reduce((a,b) => a.concat(b));
-    var all_production = data.map(d => d.production.map(h => h.coffee)).reduce((a,b) => a.concat(b));
+    var all_years = data.map(d => d.year);
+    var all_production = data.map(d => d.value);
 
     x.domain(all_years);
     y.domain(d3.extent(all_production));
 
-    console.log(hierarchy);
-
-    var country_g = svg.selectAll(".country_g")
-        .data(data)
-        .enter().append("g")
-        .attr("class", "country_g");
-
-    var country_line = country_g.append("path")
-        .attr("class", "line")
-        .attr("data-country-id", d => d.country)
-        .attr("d", d => line(d.production))
-        .attr("stroke", d => color(d.continent));
+//    var country_g = svg.selectAll(".country_g")
+//        .data(data)
+//        .enter().append("g")
+//        .attr("class", "country_g");
+//
+//    var country_line = country_g.append("path")
+//        .attr("class", "line")
+//        .attr("data-country-id", d => d.country)
+//        .attr("d", d => line(d.production))
+//        .attr("stroke", d => color(d.continent));
 
     svg.append("g")
         .attr("class", "x axis")
@@ -72,5 +71,5 @@ function renderLineChart(error, data) {
 
     svg.append("path")
         .attr("class", "line")
-        .attr("d", line(data[0].values));
+        .attr("d", line(data));
 }
