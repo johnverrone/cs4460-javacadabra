@@ -85,7 +85,6 @@ function renderSunburst(data, svg, year) {
             .entries(data)
     };
 
-
     var partition = d3.layout.partition()
         .children(d => Array.isArray(d.values) ? d.values : null)
         .value(d => d.values);

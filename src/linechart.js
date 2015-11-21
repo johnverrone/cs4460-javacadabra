@@ -13,6 +13,22 @@ var line = d3.svg.line()
     .y(d => y(d.value))
     .interpolate("linear");
 
+var area = d3.svg.area()
+    .interpolate("cardinal")
+    .x(d => x(d.key))
+    .y0(d => y(d.y0))
+    .y1(d => y(d.y0 + d.y));
+
+var stack = d3.layout.stack()
+    .values(d => d.values)
+    .x(d => d.key)
+    .y(d => d.values);
+
+var nest = d3.nest()
+    .key(d => d.continent)
+    .key(d => d.year)
+    .rollup(leaves => d3.sum(leaves, d => d.value));
+
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -21,45 +37,44 @@ var svg = d3.select("body").append("svg")
 
 var partition = d3.layout.partition()
     .children(d => Array.isArray(d.values) ? d.values : null)
-    .value(d => d.value);
+    .value(d => d.values);
 
-var color = d3.scale.category10().domain(d3.range(0,10));
+var color = d3.scale.ordinal()
+    .domain(["Africa", "South America", "North America", "Oceania", "Asia"])
+    .range(["#27ae60", "#f39c12" , "#e74c3c", "#3498db", "#2c3e50"]);
 
 d3.csv("data/total_production.csv", type, renderLineChart);
 
 function renderLineChart(error, data) {
     if (error) throw error;
 
-    var hierarchy = {
-        key: "World",
-        values: d3.nest()
-            .key(d => d.year)
-            .key(d => d.continent)
-            .key(d => d.region)
-            .entries(data)
-    };
-
-    console.log(data);
-    console.log(hierarchy);
-    partition.nodes(hierarchy);
+    var layers = stack(nest.entries(data));
 
     var all_years = data.map(d => d.year);
-    var all_production = data.map(d => d.value);
 
     x.domain(all_years);
-    y.domain(d3.extent(all_production));
+    console.log(layers);
+    y.domain([0, d3.max(layers.map(d => d.values.map(f => f.y0 + f.y )).reduce((a,b) => a.concat(b) ))]);
 
-//    var country_g = svg.selectAll(".country_g")
-//        .data(data)
-//        .enter().append("g")
-//        .attr("class", "country_g");
-//
-//    var country_line = country_g.append("path")
-//        .attr("class", "line")
-//        .attr("data-country-id", d => d.country)
-//        .attr("d", d => line(d.production))
-//        .attr("stroke", d => color(d.continent));
 
+    // Bind data
+    var area_layer = svg.selectAll(".layer")
+        .data(layers);
+
+    // Enter
+    area_layer.enter().append("path")
+        .attr("class", "layer");
+
+    // Update
+    area_layer
+        .attr("data-key", d => d.key)
+        .attr("d", d => area(d.values))
+        .attr("fill", d => color(d.key));
+
+    // Exit
+    area_layer.exit().remove();
+
+    // Axes
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
@@ -68,8 +83,4 @@ function renderLineChart(error, data) {
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
-
-    svg.append("path")
-        .attr("class", "line")
-        .attr("d", line(data));
 }
