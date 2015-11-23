@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font: 11px sans-serif;
+    font: 10px sans-serif;
     font-weight: 300;
     text-align: center;
     background: #222222;
@@ -20,9 +20,4 @@ h2 {
     font-weight: 400;
     font-size: 14px;
     margin-bottom: 20px;
-}
-
-#yearRange {
-    width: 30%;
-    margin: 0 auto;
 }
