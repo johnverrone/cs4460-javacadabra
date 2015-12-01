@@ -8,3 +8,9 @@
 text {
     fill: #2F374A;
 }
+
+.line {
+  fill: none;
+  stroke: #2F374A;
+  stroke-width: 1.5px;
+}
