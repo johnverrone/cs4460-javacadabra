@@ -3,7 +3,7 @@ function type(d) {
     return {
         continent: d.continent,
         region: d.region,
-        country: d.country,
+        key: d.country,
         year: d.year,
         value: +d.value
     }

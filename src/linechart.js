@@ -9,6 +9,7 @@ var xAxis = d3.svg.axis().scale(lineX).orient("bottom");
 var yAxis = d3.svg.axis().scale(lineY).orient("left");
 
 var nest = d3.nest()
+    .key(d => d.country)
     .key(d => d.year)
     .rollup(leaves => d3.sum(leaves, d => d.value));
 
@@ -29,7 +30,6 @@ function renderLineChart(error, data) {
 
     var layers = nest.entries(data);
 
-    console.log(layers);
     var all_years = data.map(d => d.year);
 
     lineX.domain(all_years);
@@ -56,7 +56,7 @@ function renderLineChart(error, data) {
     // Update
     line_layer
         .attr("data-key", d => d.key)
-        .attr("d", line);
+        .attr("d", d => line(d.values));
 
     // Exit
     line_layer.exit().remove();

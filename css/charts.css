@@ -14,3 +14,25 @@ text {
   stroke: #2F374A;
   stroke-width: 1.5px;
 }
+
+.tooltip {
+    background: #fff;
+    color: #202020;
+    border-radius: 5px;
+    position: absolute;
+    padding: 10px;
+    pointer-events: none;
+    text-align: center;
+    opacity: .25;
+}
+
+
+.tooltip-label {
+    font-size: 34px;
+    font-weight: bold;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
