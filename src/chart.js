@@ -3,23 +3,20 @@ var margin = {top: 30, right: 10, bottom: 20, left: 10},
     height = 500 - margin.top - margin.bottom,
     radius = Math.min(width, height) / 2;
 
-var x = d3.scale.linear().range([0, 2 * Math.PI]);
-var y = d3.scale.sqrt().range([0, radius]);
-
-var xAxis = d3.svg.axis().scale(x).orient("bottom");
-var yAxis = d3.svg.axis().scale(y).orient("left");
+var sunburstX = d3.scale.linear().range([0, 2 * Math.PI]);
+var sunburstY = d3.scale.sqrt().range([0, radius]);
 
 var partition = d3.layout.partition()
     .children(d => Array.isArray(d.values) ? d.values : null)
     .value(d => d.value);
 
 var arc = d3.svg.arc()
-    .startAngle(d => Math.max(0, Math.min(2 * Math.PI, x(d.x))))
-    .endAngle(d => Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))))
-    .innerRadius(d => Math.max(0, y(d.y)))
-    .outerRadius(d => Math.max(0, y(d.y + d.dy)));
+    .startAngle(d => Math.max(0, Math.min(2 * Math.PI, sunburstX(d.x))))
+    .endAngle(d => Math.max(0, Math.min(2 * Math.PI, sunburstX(d.x + d.dx))))
+    .innerRadius(d => Math.max(0, sunburstY(d.y)))
+    .outerRadius(d => Math.max(0, sunburstY(d.y + d.dy)));
 
-var sunburst1 = d3.select("body").append("svg")
+var sunburst1 = d3.select("#sunburst").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -59,20 +56,15 @@ var sunburst1 = d3.select("body").append("svg")
 //    d3.csv("data/domestic_consumption.csv", type, render2);
 //}
 
-function render1(data) {
-    data = data.filter(isGoodData);
-    renderSunburst(data, sunburst1);
-}
-
 //function render2(data) {
 //    data = data.filter(isGoodData);
 //    renderSunburst(data, sunburst2, year);
 //}
 
-d3.csv("data/total_production.csv", type, render1);
+d3.csv("data/total_production.csv", type, renderSunburst);
 //d3.csv("data/domestic_consumption.csv", sunburstType, render2);
 
-function renderSunburst(data, svg) {
+function renderSunburst(error, data) {
 
     var hierarchy = {
         key: "World",
@@ -80,75 +72,70 @@ function renderSunburst(data, svg) {
             .key(d => d.year)
             .key(d => d.continent)
             .key(d => d.region)
-            .key(d => d.country)
-//            .rollup(leaves => leaves[0][0])
             .entries(data)
     };
 
-    console.log(hierarchy);
-    var year = hierarchy.values[0];
+    // Add a container for the tooltip.
+    var tooltip = sunburst1.append("text")
+        .attr("font-size", 12)
+        .attr("fill", "#FFF")
+        .attr("fill-opacity", 0)
+        .attr("text-anchor", "middle")
+        .attr("transform", `translate(0, ${(12 + height/2)})`)
+        .style("pointer-events", "none");
 
+    // Add the title.
+    sunburst1.append("text")
+        .attr("font-size", 16)
+        .attr("fill", "#FFF")
+        .attr("text-anchor", "middle")
+        .attr("transform", `translate(0, ${(-10 -height/2)})`)
+        .text("Coffee Production by Country in thousand 60kg bags");
 
-//    // Add a container for the tooltip.
-//    var tooltip = svg.append("text")
-//        .attr("font-size", 12)
-//        .attr("fill", "#FFF")
-//        .attr("fill-opacity", 0)
-//        .attr("text-anchor", "middle")
-//        .attr("transform", `translate(0, ${(12 + height/2)})`)
-//        .style("pointer-events", "none");
-//
-//    // Add the title.
-//    svg.append("text")
-//        .attr("font-size", 16)
-//        .attr("fill", "#FFF")
-//        .attr("text-anchor", "middle")
-//        .attr("transform", `translate(0, ${(-10 -height/2)})`)
-//        .text("Coffee Production by Country in thousand 60kg bags");
-//
-//    function click(d) {
-//        path.transition()
-//            .duration(750)
-//            .attrTween("d", arcTween(d));
-//        mouseout();
-//    };
-//
-//    function mouseover(d) {
-//        tooltip.text(d.key + ": " +
-//            d.value + " thousand 60kg bag" +
-//            (d.value > 1 ? "s" : ""))
-//            .transition()
-//            .attr("fill-opacity", 1);
-//    };
-//
-//    function mouseout() {
-//        tooltip.transition()
-//            .attr("fill-opacity", 0);
-//    };
-//
-//    function arcTween(d) {
-//        var xd = d3.interpolate(x.domain(),
-//                    [d.x, d.x + d.dx]),
-//            yd = d3.interpolate(y.domain(),
-//                    [d.y, 1]),
-//            yr = d3.interpolate(y.range(),
-//                    [d.y ? 20 : 0, radius]);
-//        return function(d, i) {
-//            return i ?
-//                function(t) {
-//                    return arc(d);
-//                } :
-//                function(t) {
-//                    x.domain(xd(t));
-//                    y.domain(yd(t)).range(yr(t));
-//                    return arc(d);
-//                };
-//        };
-//    };
-//
+    function click(d) {
+        path.transition()
+            .duration(750)
+            .attrTween("d", arcTween(d));
+        mouseout();
+    };
+
+    function mouseover(d) {
+        tooltip.text(d.key + ": " +
+            d.value + " thousand 60kg bag" +
+            (d.value > 1 ? "s" : ""))
+            .transition()
+            .attr("fill-opacity", 1);
+    };
+
+    function mouseout() {
+        tooltip.transition()
+            .attr("fill-opacity", 0);
+    };
+
+    function arcTween(d) {
+        var xd = d3.interpolate(sunburstX.domain(),
+                    [d.x, d.x + d.dx]),
+            yd = d3.interpolate(sunburstY.domain(),
+                    [d.y, 1]),
+            yr = d3.interpolate(sunburstY.range(),
+                    [d.y ? 20 : 0, radius]);
+        return function(d, i) {
+            return i ?
+                function(t) {
+                    return arc(d);
+                } :
+                function(t) {
+                    sunburstX.domain(xd(t));
+                    sunburstY.domain(yd(t)).range(yr(t));
+                    return arc(d);
+                };
+        };
+    };
+
     // Bind data
-    var path = svg.selectAll("path").data(partition.nodes(year));
-    console.log(year);
+    var path = sunburst1.selectAll("path").data(partition.nodes(hierarchy.values[0]));
+
+    console.log(hierarchy.values[0]);
 
     // Enter
     path.enter().append("path")
@@ -161,21 +148,25 @@ function renderSunburst(data, svg) {
         .attr("data-key", d => d.key)
         .attr("stroke", "#FFF")
         .attr("fill-rule", "evenodd")
-        .attr("fill", color);
-//        .on("click", click)
-//        .on("mouseover", mouseover)
-//        .on("mouseout", mouseout);
+        .attr("fill", colorSunburst)
+        .on("click", click)
+        .on("mouseover", mouseover)
+        .on("mouseout", mouseout);
 
     // Exit
     path.exit().remove();
 }
 
-var color = function(d) {
+var colorSunburst = function(d) {
     var colors;
 
     if (!d.parent) {
-        colors = d3.scale.category10().domain(d3.range(0,10));
-        d.color = "#222222";
+//        colors = d3.scale.category10().domain(d3.range(0,10));
+        colors = d3.scale.ordinal()
+    .domain(["South America", "North America", "Africa", "Asia", "Oceania"])
+    .range(["#f39c12",  "#e74c3c", "#27ae60",  "#2c3e50", "#3498db"]);
+
+        d.color = "transparent";
     } else if (d.children) {
         var startColor = d3.hcl(d.color).darker();
         var endColor   = d3.hcl(d.color).brighter();

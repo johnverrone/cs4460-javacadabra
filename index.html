@@ -26,14 +26,26 @@
         <script src="libraries/topojson/topojson.js"></script>
         <script src="libraries/leaflet/dist/leaflet.js"></script>
         <script src="libraries/jquery/dist/jquery.min.js"></script>
+        <script src="libraries/bootstrap/dist/js/bootstrap.min.js"></script>
 
         <div>
             <h1>Javacadabra</h1>
         </div>
 
+<!--
+        <ul class="nav nav-tabs">
+            <li role="presentation"><a href="#">Production/Consumption</a></li>
+            <li role="presentation"><a href="#">Imports/Exports</a></li>
+        </ul>
+-->
+
+        <div id="sunburst"></div>
+        <div id="areachart"></div>
+
         <!-- Our js files -->
         <script src="dist/preprocessing.js"></script>
         <script src="dist/chart.js"></script>
-        <script src="dist/linechart.js"></script>
+        <script src="dist/areachart.js"></script>
+
     </body>
 </html>

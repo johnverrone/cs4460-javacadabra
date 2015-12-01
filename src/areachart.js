@@ -9,7 +9,7 @@ var xAxis = d3.svg.axis().scale(x).orient("bottom");
 var yAxis = d3.svg.axis().scale(y).orient("left");
 
 var area = d3.svg.area()
-    .interpolate("cardinal")
+    .interpolate("linear")
     .x(d => x(d.key))
     .y0(d => y(d.y0))
     .y1(d => y(d.y0 + d.y));
@@ -28,7 +28,9 @@ var color = d3.scale.ordinal()
     .domain(["Africa", "South America", "North America", "Oceania", "Asia"])
     .range(["#27ae60", "#f39c12" , "#e74c3c", "#3498db", "#2c3e50"]);
 
-var svg = d3.select("body").append("svg")
+var colors = d3.scale.category10().domain(d3.range(0,10));
+
+var svg = d3.select("#areachart").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
