@@ -17,11 +17,13 @@ var line = d3.svg.line()
     .x(function(d) { return lineX(d.key); })
     .y(function(d) { return lineY(d.values); });
 
-var lineSvg = d3.select("#linechart").append("svg")
+var container = d3.select("#linechart").append("svg")
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
+    .attr("height", height + margin.top + margin.bottom);
+
+var lineSvg = container.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 
 d3.csv("data/total_production.csv", type, renderLineChart);
 
@@ -35,6 +37,33 @@ function renderLineChart(error, data) {
     lineX.domain(all_years);
     lineY.domain([0, 150000]);
 
+    container.on("mousemove", mousemove);
+
+    // from http://bl.ocks.org/mbostock/3902569
+    var focus = lineSvg.append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("fill", "red")
+        .attr("width", 4)
+        .attr("height", height);
+
+    function mousemove() {
+        var x = (d3.mouse(this)[0] - margin.left);
+        console.log(x);
+        // find the closest lineX value
+        var range = lineX.range();
+        var current = range[0];
+        var currentIndex = 0;
+        for (var i = 0; i < range.length; i++) {
+            if (Math.abs(x - range[i]) < Math.abs(x - current)) {
+                currentIndex = i;
+                current = range[i];
+            }
+        }
+        console.log(current);
+        changeYear(currentIndex);
+        focus.attr("x", current - 2);
+    }
     // Axes
     lineSvg.append("g")
         .attr("class", "x axis")

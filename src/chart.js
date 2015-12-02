@@ -3,6 +3,8 @@ var margin = {top: 30, right: 10, bottom: 20, left: 10},
     height = 500 - margin.top - margin.bottom,
     radius = Math.min(width, height) / 2;
 
+var changeYear;
+
 var sunburstX = d3.scale.linear().range([0, 2 * Math.PI]);
 var sunburstY = d3.scale.sqrt().range([0, radius]);
 
@@ -122,28 +124,39 @@ function renderSunburst(error, data) {
         };
     };
 
-    // Bind data
-    var path = sunburst1.selectAll("path").data(partition.nodes(hierarchy.values[year]));
 
-    // Enter
-    path.enter().append("path")
-        .attr("stroke", "bar")
-        .attr("fill-rule", "evenodd");
+    function updatePath() {
+        // Bind data
+        var path = sunburst1.selectAll("path").data(partition.nodes(hierarchy.values[year]));
 
-    // Update
-    path
-        .attr("d", arc)
-        .attr("data-key", d => d.key)
-        .attr("stroke", "#FFF")
-        .attr("fill-rule", "evenodd")
-        .attr("fill", colorSunburst)
-        .on("click", click)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout)
-        .on("mousemove", mousemove);
+        // Enter
+        path.enter().append("path")
+            .attr("stroke", "bar")
+            .attr("fill-rule", "evenodd");
 
-    // Exit
-    path.exit().remove();
+        // Update
+        path
+            .attr("d", arc)
+            .attr("data-key", d => d.key)
+            .attr("stroke", "#FFF")
+            .attr("fill-rule", "evenodd")
+            .attr("fill", colorSunburst)
+            .on("click", click)
+            .on("mouseover", mouseover)
+            .on("mouseout", mouseout)
+            .on("mousemove", mousemove);
+
+        // Exit
+        path.exit().remove();
+    }
+
+    updatePath();
+
+    changeYear = function(yearIndex) {
+        year = yearIndex;
+        updatePath();
+        yearLabel.text(hierarchy.values[year].key);
+    }
 }
 
 function numberWithCommas(x) {
