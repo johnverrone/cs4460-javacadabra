@@ -49,7 +49,6 @@ function renderLineChart(error, data) {
 
     function mousemove() {
         var x = (d3.mouse(this)[0] - margin.left);
-        console.log(x);
         // find the closest lineX value
         var range = lineX.range();
         var current = range[0];
@@ -60,7 +59,6 @@ function renderLineChart(error, data) {
                 current = range[i];
             }
         }
-        console.log(current);
         changeYear(currentIndex);
         focus.attr("x", current - 2);
     }

@@ -125,9 +125,10 @@ function renderSunburst(error, data) {
     };
 
 
+    // Bind data
+    var path = sunburst1.selectAll("path").data(partition.nodes(hierarchy.values[year]));
     function updatePath() {
-        // Bind data
-        var path = sunburst1.selectAll("path").data(partition.nodes(hierarchy.values[year]));
+        path.data(partition.nodes(hierarchy.values[year]));
 
         // Enter
         path.enter().append("path")
