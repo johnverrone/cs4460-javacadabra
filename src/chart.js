@@ -124,11 +124,10 @@ function renderSunburst(error, data) {
         };
     };
 
-
-    // Bind data
-    var path = sunburst1.selectAll("path").data(partition.nodes(hierarchy.values[year]));
+    var path;
     function updatePath() {
-        path.data(partition.nodes(hierarchy.values[year]));
+        // Bind data
+        path = sunburst1.selectAll("path").data(partition.nodes(hierarchy.values[year]));
 
         // Enter
         path.enter().append("path")
